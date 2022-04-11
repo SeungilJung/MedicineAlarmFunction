@@ -65,11 +65,11 @@ class TodayPage extends StatelessWidget {
         Expanded(
           child: ListView.separated(
             padding: const EdgeInsets.symmetric(vertical: 10),
-            itemCount: medicineAlarms.length,
-            itemBuilder: (context, index) {
-              return _buildListTile(medicineAlarms[index]);
+            itemCount: medicineAlarms.length, //아이템카운트까지 전부 for문돌린것처럼 주루룩
+            itemBuilder: (context, i) {
+              return _buildListTile(medicineAlarms[i]);
             },
-            separatorBuilder: (context, index) {
+            separatorBuilder: (context, i) {
               return const Divider(
                 height: 20,
               );
@@ -92,9 +92,9 @@ class TodayPage extends StatelessWidget {
   Widget _buildListTile(MedicineAlarm medicineAlarm) {
     return ValueListenableBuilder(
 
-      valueListenable: historyRepository.historyBox.listenable(),
-      builder: (context, Box<MedicineHistory> historyBox, _) {
-        if (historyBox.values.isEmpty) {
+      valueListenable: LogRepository.LogBox.listenable(),
+      builder: (context, Box<MedicineLog> LogBox, _) {
+        if (LogBox.values.isEmpty) {
           return BeforeTile(
             medicineAlarm: medicineAlarm,
           );
@@ -102,16 +102,16 @@ class TodayPage extends StatelessWidget {
       
       
 
-        final todayTakeHistory = historyBox.values.singleWhere(
-          (history) =>
-              history.medicineid == medicineAlarm.id &&
-              history.medicineKey==medicineAlarm.key &&
-              history.alarmTime == medicineAlarm.alarmTime &&
-              isToday(history.takeTime, DateTime.now()),
+        final todayTakeLog = LogBox.values.singleWhere(
+          (Log) =>
+              Log.medicineid == medicineAlarm.id &&
+              Log.medicineKey==medicineAlarm.key &&
+              Log.alarmTime == medicineAlarm.alarmTime &&
+              isToday(Log.takeTime, DateTime.now()),
 
-            orElse: () => MedicineHistory(    
-            medicineid: -1,
-            alarmTime: '',
+            orElse: () => MedicineLog(    
+            medicineid: -1,//디폴트 -1,즉 각 알람시간에 할당받은 medicine아이디값이 -1이면 아직 taketime이들어가지 않아서 medocine log데이터스토리지는 기본값,아무값없는상태
+            alarmTime: '', //taketime이 입력되면 전체 medicine log데이터들이 그게 medicine log박스로 들어가서 저장됨
             takeTime: DateTime.now(), 
             medicineKey: -1,
             imagePath: null,
@@ -120,13 +120,13 @@ class TodayPage extends StatelessWidget {
         );
 
 
-        if(todayTakeHistory.medicineid ==-1 /*&& todayTakeHistory.alarmTime ==''*/){
+        if(todayTakeLog.medicineid ==-1 /*&& todayTakeLog.alarmTime ==''*/){
             return BeforeTile(
             medicineAlarm: medicineAlarm,
           );
         }
          return AfterTile(
-            history: todayTakeHistory,
+            Log: todayTakeLog,
             medicineAlarm: medicineAlarm,         
       );
     

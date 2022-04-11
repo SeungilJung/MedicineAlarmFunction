@@ -111,12 +111,12 @@ final String medicineName;
     );
     
   }
-
+//getter adding alarm페이지 쭈루룩 나오고 밑에 addalarm버튼까지 나오늘 콜롬리스트
 List<Widget> get alarmWidgets {
-            final children = <Widget> [];
-            children.addAll(service.alarms.map((alarmTime) => AlarmBox(
+            final children = <Widget> [];  //설정한 알람 타임수만큼 알람박스 생성, map함수는 iterable,
+            children.addAll(service.alarms.map((alarmTime) => AlarmBlock(
                 time: alarmTime, services: service,
-               
+               //children이라는 리스트안에 iterable인 알람박스map함수 모두 addAll
 
                  
             ),
@@ -140,8 +140,8 @@ List<Widget> get alarmWidgets {
 
 
 
-class AlarmBox extends StatelessWidget {
-  const AlarmBox({
+class AlarmBlock extends StatelessWidget {
+  const AlarmBlock({
     Key? key, required this.time, required this.services,
   }) : super(key: key);
 
@@ -150,7 +150,7 @@ class AlarmBox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final initTime =DateFormat('HH:mm').parse(time);
+    final initTime =DateFormat('HH:mm');
 
     return Row(children: [
       IconButton(onPressed: (){

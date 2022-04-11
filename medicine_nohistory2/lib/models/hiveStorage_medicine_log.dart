@@ -3,8 +3,8 @@ import 'package:hive/hive.dart';
 part 'hiveStorage_medicine_log.g.dart';
 
 @HiveType(typeId: 2)
-class MedicineHistory extends HiveObject{
-  MedicineHistory(   {
+class MedicineLog extends HiveObject{
+  MedicineLog(   {
     required this.medicineid, 
     required this.alarmTime, 
     required this.takeTime,
@@ -17,7 +17,7 @@ class MedicineHistory extends HiveObject{
     });
   //id, name, image(optional), alarm
 
-  @HiveField(0)
+  @HiveField(0,defaultValue: -1)
   final int medicineid;
 
    @HiveField(1)

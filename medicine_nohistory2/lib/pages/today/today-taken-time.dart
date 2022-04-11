@@ -49,7 +49,7 @@ class BeforeTile extends StatelessWidget {
               children: [
                 Text('${medicineAlarm.name},', style: textStyle),
                 TileActionButton(     
-                  onTap: () => _onPreviousTake(context),
+                  onTap: () => TakenTimeInput(context),
                   title: 'Taken',
                 ),
                 Text('Taken Well!', style: textStyle),
@@ -59,20 +59,20 @@ class BeforeTile extends StatelessWidget {
   }
 
 
- void _onPreviousTake (BuildContext context) {
+ void TakenTimeInput (BuildContext context) {
                     showModalBottomSheet(context: context, builder: (context) => TimeSettingBottomSheet(initialTime:medicineAlarm.alarmTime )
                      ).then((takeDateTime) {
                        if(takeDateTime==null||takeDateTime is !DateTime){
                          return;
                        }
-                       historyRepository.addHistory(MedicineHistory(
+                       LogRepository.addLog(MedicineLog(
                          medicineid: medicineAlarm.id, 
                          alarmTime: medicineAlarm.alarmTime, 
                          takeTime: takeDateTime, 
                          medicineKey: medicineAlarm.key,
                          imagePath: medicineAlarm.imagePath, 
                          name: medicineAlarm.name));
-                     });
+                     }); //taketime까지 규정한 모든 데이터값 있으니 medicinelog hive박스로 이제서야 저장
                   }
 }
 
@@ -82,11 +82,11 @@ class BeforeTile extends StatelessWidget {
 class AfterTile extends StatelessWidget {
   const AfterTile({
     Key? key,
-     required this.medicineAlarm, required this.history,
+     required this.medicineAlarm, required this.Log,
   }) : super(key: key);
 
   final MedicineAlarm medicineAlarm;
-  final MedicineHistory history;
+  final MedicineLog Log;
 
   @override
   Widget build(BuildContext context) {
@@ -121,7 +121,7 @@ class AfterTile extends StatelessWidget {
   }
 
   List<Widget> _buildTileBody(TextStyle? textStyle, BuildContext context) {
-    DateFormat("HH:mm").format(history.takeTime);
+    DateFormat("HH:mm").format(Log.takeTime);
     return [
         Text.rich(
         TextSpan(
@@ -145,7 +145,7 @@ class AfterTile extends StatelessWidget {
                 Text('${medicineAlarm.name},', style: textStyle),
                 TileActionButton(
                   onTap: () => _onTap(context),
-                  title:  DateFormat(" At HH  mm     ").format(history.takeTime),
+                  title:  DateFormat(" At HH  mm     ").format(Log.takeTime),
                 ),
                 Text('|', style: textStyle),
                 Text('Taken well!', style: textStyle),
@@ -157,13 +157,13 @@ class AfterTile extends StatelessWidget {
           
   }
 
-  String get takeTimeStr => DateFormat("HH:mm").format(history.takeTime);
+  String get takeTimeStr => DateFormat("HH:mm").format(Log.takeTime);
 
   void _onTap (BuildContext context) {
                     showModalBottomSheet(context: context, builder: (context) => TimeSettingBottomSheet(
                       initialTime:takeTimeStr,
                       bottomwidget: TextButton( onPressed: () { 
-                       historyRepository.deleteHistory(history.key);
+                       LogRepository.deleteLog(Log.key);
                         Navigator.pop(context);
                        },
                       child: Text('Erase the time'),),)
@@ -171,10 +171,10 @@ class AfterTile extends StatelessWidget {
                        if(takeDateTime==null||takeDateTime is !DateTime){
                          return;
                        }
-                       historyRepository.updateHistory(
+                       LogRepository.updateLog(
                          
-                         key: history.key,
-                         history:MedicineHistory(
+                         key: Log.key,
+                         Log:MedicineLog(
                          medicineid: medicineAlarm.id, 
                          alarmTime: medicineAlarm.alarmTime, 
                          takeTime: takeDateTime, 
@@ -204,7 +204,7 @@ class DeleteDataButton extends StatelessWidget {
       onPressed: () {
         
         notification.deleteMultipleAlarm(alarmIds);
-        historyRepository.deleteAllHistory(keys);
+        LogRepository.deleteAllLog(keys);
         medicineRepository.deleteMedicine(medicineAlarm.key);
         //Navigator.pop(context);
       },
@@ -222,9 +222,8 @@ class DeleteDataButton extends StatelessWidget {
   }
 
   Iterable<int> get keys {
-    final histories = historyRepository.historyBox.values.where((histroy) =>
-        histroy.medicineid == medicineAlarm.id &&
-        histroy.medicineKey == medicineAlarm.key);
+    final histories = LogRepository.LogBox.values.where((histroy) =>
+        histroy.medicineid == medicineAlarm.id);
     final keys = histories.map((e) => e.key as int);
     return keys;
   }

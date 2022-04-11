@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:medicine/pages/mainPage.dart';
+import 'package:medicine/pages/homepage.dart';
 import 'package:medicine/repositories/hive.dart';
-import 'package:medicine/repositories/medicine_history_repository.dart';
-import 'package:medicine/repositories/medicine_repository.dart';
+import 'package:medicine/repositories/medicine_log.dart';
+import 'package:medicine/repositories/medicine.dart';
 import 'package:medicine/services/notification_service.dart';
 
 final notification=NotificationService();
 final hive=  HiveStorage();
 final medicineRepository=MedicineRepository();
-final historyRepository=MedicineHistoryRepository();
+final LogRepository=MedicineLogRepository();
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final notification = NotificationService();

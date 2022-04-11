@@ -5,7 +5,8 @@ import 'package:intl/intl.dart';
 
 class AddMedicineService with ChangeNotifier{
 final alarms=<String>{
-  '09:00'
+  '09:00',
+  '13:00',
 };
 
 Set<String> get Alarms => alarms;

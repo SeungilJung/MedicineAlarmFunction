@@ -8,14 +8,14 @@ class  HiveStorage {
     await Hive.initFlutter();
 
     Hive.registerAdapter<Medicine>(MedicineAdapter());
-    Hive.registerAdapter<MedicineHistory>(MedicineHistoryAdapter());
+    Hive.registerAdapter<MedicineLog>(MedicineLogAdapter());
 
     await Hive.openBox<Medicine>( HiveStorageBox.medicine);
-    await Hive.openBox<MedicineHistory>( HiveStorageBox.medicineHistory);
+    await Hive.openBox<MedicineLog>( HiveStorageBox.MedicineLog);
   }
 }
 
 class  HiveStorageBox {
   static const String medicine = 'medicine';
-  static const String medicineHistory = 'medicine_history';
+  static const String MedicineLog = 'medicine_Log';
 }
